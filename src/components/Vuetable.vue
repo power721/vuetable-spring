@@ -1,5 +1,5 @@
 <template>
-  <div id="vuetable">
+  <div class="vuetable-container">
     <div class="vuetable-pagination ui basic segment grid">
       <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
       <vuetable-pagination ref="pagination" @vuetable-pagination:change-page="changePage"></vuetable-pagination>
@@ -34,7 +34,7 @@
                 <th @click="orderBy(field, $event)"
                   :id="'_' + field.name"
                   :class="['vuetable-th-'+field.name, field.titleClass,  {'sortable': isSortable(field)}]">
-                  {{  getTitle(field) }}&nbsp;
+                  {{ getTitle(field) }}&nbsp;
                   <i v-if="isInCurrentSortGroup(field)" :class="sortIcon(field)" :style="{opacity: sortIconOpacity(field)}"></i>
                 </th>
               </template>
@@ -64,16 +64,16 @@
                   </td>
                 </template>
                 <template v-else>
-                  <td v-if="hasCallback(field)" :class="field.dataClass"
+                  <td v-if="hasCallback(field)" :class="['vuetable-custom', field.dataClass]"
                     @click="onCellClicked(item, field, $event)"
                     @dblclick="onCellDoubleClicked(item, field, $event)"
                     v-html="callCallback(field, item)"
                   >
                   </td>
-                  <td v-if="hasComponent(field)" :class="['vuetable-component', field.dataClass]">
+                  <td v-else-if="hasComponent(field)" :class="['vuetable-component', field.dataClass]">
                     <component :is="field.component" :row-data="item" :row-index="index" :value="getObjectValue(item, field.name, '')"></component>
                   </td>
-                  <td v-if="hasTemplate(field)" :class="['vuetable-template', field.dataClass]">
+                  <td v-else-if="hasTemplate(field)" :class="['vuetable-template', field.dataClass]">
                     <component :is="field.template" :row-data="item" :row-index="index" :value="getObjectValue(item, field.name, '')"></component>
                   </td>
                   <td v-else :class="field.dataClass"
