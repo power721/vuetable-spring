@@ -22,7 +22,7 @@
       <template v-for="n in windowSize">
         <a @click="loadPage(windowStart+n-1)"
           :class="[css.pageClass, isCurrentPage(windowStart+n-1) ? css.activeClass : '']"
-          v-html="windowStart+n-1">
+          v-html="windowStart+n">
         </a>
       </template>
     </template>

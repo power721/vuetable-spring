@@ -62,9 +62,9 @@ export default {
     },
     windowStart () {
       if (!this.tablePagination || this.tablePagination.number <= this.onEachSide) {
-        return 1
+        return 0
       } else if (this.tablePagination.number >= (this.totalPage - this.onEachSide)) {
-        return this.totalPage - this.onEachSide * 2
+        return this.totalPage - 1 - this.onEachSide * 2
       }
 
       return this.tablePagination.number - this.onEachSide

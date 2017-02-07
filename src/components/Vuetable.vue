@@ -70,6 +70,12 @@
                     v-html="callCallback(field, item)"
                   >
                   </td>
+                  <td v-else-if="hasText(field)" :class="['vuetable-custom', field.dataClass]"
+                      @click="onCellClicked(item, field, $event)"
+                      @dblclick="onCellDoubleClicked(item, field, $event)"
+                      v-html="parseText(field, item)"
+                  >
+                  </td>
                   <td v-else-if="hasComponent(field)" :class="['vuetable-component', field.dataClass]">
                     <component :is="field.component" :row-data="item" :row-index="index" :value="getObjectValue(item, field.name, '')"></component>
                   </td>
@@ -269,6 +275,7 @@ export default {
             callback: null,
             component: null,
             template: null,
+            text: null,
             visible: true
           }
         } else {
@@ -281,6 +288,7 @@ export default {
             callback: (field.callback === undefined) ? '' : field.callback,
             component: (field.component === undefined) ? '' : field.component,
             template: (field.template === undefined) ? '' : self.handleTemplate(field.name, field.template),
+            text: (field.text === undefined) ? '' : field.text,
             visible: (field.visible === undefined) ? true : field.visible
           }
         }
@@ -564,6 +572,9 @@ export default {
 
       return opacity
     },
+    hasText: function (item) {
+      return !!item.text
+    },
     hasCallback: function (item) {
       return !!item.callback
     },
@@ -572,6 +583,12 @@ export default {
     },
     hasTemplate: function (item) {
       return !!item.template
+    },
+    parseText: function (field, item) {
+      if (!this.hasText(field)) return
+
+      let value = this.getObjectValue(item, field.name)
+      return field.text.replace(/{}/g, value)
     },
     callCallback: function (field, item) {
       if (!this.hasCallback(field)) return
