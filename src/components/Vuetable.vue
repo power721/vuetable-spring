@@ -166,7 +166,7 @@ export default {
     size: {
       type: Number,
       default: function () {
-        return 5
+        return 20
       }
     },
     sortOrder: {
