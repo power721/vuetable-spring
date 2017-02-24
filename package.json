@@ -12,6 +12,11 @@
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/power721/vuetable-spring.git"
+  },
+  "license": "MIT",
   "dependencies": {
     "vue": "^2.1.0",
     "vue-resource": "^1.0.0"

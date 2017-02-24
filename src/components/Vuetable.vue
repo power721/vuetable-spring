@@ -312,7 +312,6 @@ export default {
             required: true
           },
           value: {
-            type: String,
             required: true
           },
           rowIndex: {
@@ -372,8 +371,13 @@ export default {
 
       this.tableData = this.getObjectValue(body, this.dataPath, null)
       this.tablePagination = this.getPagination(body, this.paginationPath, this.dataPath, null)
-      this.$refs.pagination.setPaginationData(this.tablePagination)
-      this.$refs.paginationInfo.setPaginationData(this.tablePagination)
+      if (this.$refs.pagination !== null) {
+        this.$refs.pagination.setPaginationData(this.tablePagination)
+      }
+
+      if (this.$refs.paginationInfo != null) {
+        this.$refs.paginationInfo.setPaginationData(this.tablePagination)
+      }
 
       if (this.tablePagination === null) {
         this.warn('vuetable: pagination-path "' + this.paginationPath + '" not found. ' +
