@@ -33,12 +33,24 @@ fields: [
       name: 'id'
     },
     {
-      name: 'name', 
+      name: 'name',
       template: '<router-link :to="\'/users/\' + rowData.id">{{ value }}</router-link>'
   }]
 ```
+* Support filter in fields.
+```js
+fields: [
+    {
+      name: 'language',
+      filter: ['English', 'Chinese']
+    },
+    {
+      name: 'username',
+      filter: {name: 'name', options: ['Andy', 'Bob']}
+  }]
+```
 * Sortable by default.
-
+* Displaying and pagination pagination information by default.
 ---
 
 ### Documentation and Tutorial

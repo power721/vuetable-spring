@@ -30,6 +30,14 @@
                     :class="['vuetable-th-'+field.name, field.titleClass || '']" v-html="field.title || ''">
                 </th>
               </template>
+              <template v-else-if="hasFilter(field)">
+                <th :id="'_' + field.name" :class="['vuetable-th-'+field.name, field.titleClass]">
+                  <select @change="filter" v-model="field.filter.value" class="vuetable-select">
+                    <option value="">{{ getTitle(field) }}</option>
+                    <option v-for="item in field.filter.options" :value="item">{{ item | titleCase }}</option>
+                  </select>
+                </th>
+              </template>
               <template v-else>
                 <th @click="orderBy(field, $event)"
                   :id="'_' + field.name"
@@ -272,6 +280,7 @@ export default {
             sortField: self.setSort(field),
             titleClass: '',
             dataClass: '',
+            filter: null,
             callback: null,
             component: null,
             template: null,
@@ -285,6 +294,7 @@ export default {
             sortField: (field.sortField === undefined) ? field.name : field.sortField,
             titleClass: (field.titleClass === undefined) ? '' : field.titleClass,
             dataClass: (field.dataClass === undefined) ? '' : field.dataClass,
+            filter: (field.filter === undefined) ? '' : self.handleFilter(field.name, field.filter),
             callback: (field.callback === undefined) ? '' : field.callback,
             component: (field.component === undefined) ? '' : field.component,
             template: (field.template === undefined) ? '' : self.handleTemplate(field.name, field.template),
@@ -301,6 +311,13 @@ export default {
       }
 
       return this.titleCase(str)
+    },
+    handleFilter (name, filter) {
+      return {
+        name: (filter.name === undefined) ? name : filter.name,
+        value: (filter.value === undefined) ? '' : filter.value,
+        options: (filter.options === undefined) ? filter : filter.options
+      }
     },
     handleTemplate (name, template) {
       let componentName = 'vue-table-' + name + '-component'
@@ -425,6 +442,12 @@ export default {
         params[x] = this.appendParams[x]
       }
 
+      this.fields.forEach(function (field, i) {
+        if (field.filter !== undefined && field.filter.value !== undefined) {
+          params[field.filter.name] = field.filter.value
+        }
+      })
+
       return params
     },
     getSortParam: function () {
@@ -478,6 +501,9 @@ export default {
     },
     fieldIsInSortOrderPosition (field, i) {
       return this.sortOrder[i].field === field.name && this.sortOrder[i].sortField === field.sortField
+    },
+    filter: function () {
+      this.loadData()
     },
     orderBy: function (field, event) {
       if (!this.isSortable(field)) return
@@ -578,6 +604,9 @@ export default {
     },
     hasText: function (item) {
       return !!item.text
+    },
+    hasFilter: function (item) {
+      return !!item.filter
     },
     hasCallback: function (item) {
       return !!item.callback
