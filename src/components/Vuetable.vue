@@ -34,7 +34,7 @@
                 <th :id="'_' + field.name" :class="['vuetable-th-'+field.name, field.titleClass]">
                   <select @change="filter" v-model="field.filter.value" class="vuetable-select">
                     <option value="">{{ getTitle(field) }}</option>
-                    <option v-for="item in field.filter.options" :value="item">{{ item | titleCase }}</option>
+                    <option v-for="item in field.filter.options" :value="item">{{ formatFilter(field, item) }}</option>
                   </select>
                 </th>
               </template>
@@ -160,6 +160,12 @@ export default {
       }
     },
     appendParams: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    },
+    filters: {
       type: Object,
       default: function () {
         return {}
@@ -442,8 +448,12 @@ export default {
         params[x] = this.appendParams[x]
       }
 
+      for (let x in this.filters) {
+        params[x] = this.filters[x]
+      }
+
       this.fields.forEach(function (field, i) {
-        if (field.filter !== undefined && field.filter.value !== undefined) {
+        if (!!field.filter && !!field.filter.value) {
           params[field.filter.name] = field.filter.value
         }
       })
@@ -622,6 +632,20 @@ export default {
 
       let value = this.getObjectValue(item, field.name)
       return field.text.replace(/{}/g, value)
+    },
+    formatFilter: function (field, value) {
+      if (!this.hasCallback(field)) return value
+
+      let args = field.callback.split('|')
+      let func = args.shift()
+
+      if (typeof this.$parent[func] === 'function') {
+        return (args.length > 0)
+          ? this.$parent[func]([value].concat(args))
+          : this.$parent[func](value)
+      }
+
+      return value
     },
     callCallback: function (field, item) {
       if (!this.hasCallback(field)) return
